@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalDependencies">
+    <plugin id="com.intellij" />
+    <plugin id="com.intellij.configurationScript" />
+    <plugin id="com.jetbrains.edu" />
+    <plugin id="com.jetbrains.pycharm.edu.customization" />
+    <plugin id="org.jetbrains.plugins.yaml" />
+  </component>
+</project>

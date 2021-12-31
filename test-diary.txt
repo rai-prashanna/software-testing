@@ -1,0 +1,146 @@
+RED(TESTs-FAILED-1)
+we have written first test case with initialize inputs correctly
+
+    def setUp(self):
+        self.simple_author_1 = "Smith"
+        self.simple_author_2 = "Jones"
+        self.author_1 = "John Smith"
+        self.author_2 = "Bob Jones"
+        self.author_3 = "Justin Kenneth Pearson"
+        self.surname_first_1 = "Pearson, Justin Kenneth"
+        self.surname_first_2 = "Van Hentenryck, Pascal"
+        self.multiple_authors_1 = "Pearson, Justin and Jones, Bob"
+
+    #first test case
+    #first test case looks for author name with Surname.
+    def test_author_1(self):
+        # Test  only  surnames.
+        (Surname, FirstNames) = bibtex.extract_author(self.simple_author_1)
+        self.assertEqual((Surname, FirstNames), ('Smith', ''))
+        (Surname, FirstNames) = bibtex.extract_author(self.simple_author_2)
+        self.assertEqual((Surname, FirstNames), ('Jones', ''))
+#This test fails because my extract_author method have empty implementation
+
+
+GREEN(TEST-SUCCESS)
+To make this test Green, we need to create bibtex module in bibtex.py
+def extract_author(simple_author_1):
+    tokenize_name=simple_author_1.split(" ")
+    length_tokenize_name=len(tokenize_name)
+    if length_tokenize_name==1:
+        return simple_author_1, ""
+
+
+RED
+We added new test case in testbibtex.py and Since, our
+extract_author method only cover logic for first test case not second test case.
+So, it fails.
+# Our second Test case is define for non-empty Surname and First name
+    def test_author_2(self):
+        (Surname, First) = bibtex.extract_author(self.author_1)
+        self.assertEqual((Surname, First), ("Smith", "John"))
+        (Surname, First) = bibtex.extract_author(self.author_2)
+        self.assertEqual((Surname, First), ("Jones", "Bob"))
+
+
+This fails
+
+
+GREEN
+#I made  it green by adding following logic.
+
+def extract_author(simple_author_1):
+    tokenize_name=simple_author_1.split(" ")
+    length_tokenize_name=len(tokenize_name)
+    if length_tokenize_name==1:
+        return simple_author_1, ""
+    else:
+        return (tokenize_name[1],tokenize_name[0])
+
+
+RED
+Similary, we added third test case.
+Our test runner fails.
+Our third test case  is define for space separated First Name.
+Since old implementation doesn't contain logic for handling third test case.
+
+    def test_author_3(self):
+        (Surname, First) = bibtex.extract_author(self.author_3)
+        self.assertEqual((Surname, First), ("Pearson", "Justin Kenneth"))
+
+
+GREEN
+To make it green, I define more logic into extract_author.
+
+def extract_author(simple_author_1):
+    tokenize_name=simple_author_1.split(" ")
+    length_tokenize_name=len(tokenize_name)
+    if length_tokenize_name==1:
+        return simple_author_1, ""
+    elif length_tokenize_name==2:
+        return (tokenize_name[1],tokenize_name[0])
+    else:
+        return (tokenize_name[2],tokenize_name[0]+" "+tokenize_name[1])
+
+
+RED
+Also, we added test case for white-space separated Surname.
+It fails, Since our extract_author doesn't contain enough logic.
+
+    def test_surname_first(self):
+        (Surname, First) = bibtex.extract_author(self.surname_first_1)
+        self.assertEqual((Surname, First), ("Pearson", "Justin Kenneth"))
+        (Surname, First) = bibtex.extract_author(self.surname_first_2)
+        self.assertEqual((Surname, First), ("Van Hentenryck", "Pascal"))
+
+GREEN
+I added following logic to make it Green.
+
+def extract_author(simple_author_1):
+    tokenize_name= simple_author_1.split(",")
+    if len(tokenize_name)>1:
+        return (tokenize_name[0],tokenize_name[1].strip())
+    tokenize_name=simple_author_1.split(" ")
+    length_tokenize_name=len(tokenize_name)
+    if length_tokenize_name==1:
+        return simple_author_1, ""
+    elif length_tokenize_name==2:
+        return (tokenize_name[1],tokenize_name[0])
+    else:
+        return (tokenize_name[2],tokenize_name[0]+" "+tokenize_name[1])
+
+RED:
+Finally, We added our final test case to it,
+which should support for multiple author.
+and it fails.
+
+    def test_multiple_author(self):
+        Authors = bibtex.extract_author(self.multiple_authors_1)
+        self.assertEqual(Authors[0], ("Pearson", "Justin"))
+        self.assertEqual(Authors[1], ("Jones", "Bob"))
+
+GREEEN:
+I added with following logic to make it green.
+
+def extract_author(simple_author_1):
+    list_tokenize_name=simple_author_1.split("and")
+    if len(list_tokenize_name)>1:
+        authors_list = []
+        for tokenize_name in list_tokenize_name:
+            splitted=tokenize_name.split(",")
+            authors_list.append((splitted[0].strip(),splitted[1].strip()))
+        return authors_list
+    tokenize_name= simple_author_1.split(",")
+    if len(tokenize_name)>1:
+        return (tokenize_name[0],tokenize_name[1].strip())
+    tokenize_name=simple_author_1.split(" ")
+    length_tokenize_name=len(tokenize_name)
+    if length_tokenize_name==1:
+        return simple_author_1, ""
+    elif length_tokenize_name==2:
+        return (tokenize_name[1],tokenize_name[0])
+    else:
+        return (tokenize_name[2],tokenize_name[0]+" "+tokenize_name[1])
+
+
+All 5 test are executed successfully with green.
